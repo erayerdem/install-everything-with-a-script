@@ -11,10 +11,10 @@ function update() {
 }
 function git_maven_terminator_tmux() {
 
-  if ! apt install maven &&
-    apt install git &&
-    apt install terminator &&
-    apt install tmux; then
+  if ! apt install -y  maven &&
+    apt install -y git &&
+    apt install -y terminator &&
+    apt install -y tmux; then
 
     return 1
   fi
@@ -22,7 +22,7 @@ function git_maven_terminator_tmux() {
 }
 function ohmyzsh() {
 
-  if ! apt install zsh; then
+  if ! apt install -y  zsh; then
 
     echo "zsh cant install" 1 >&2
     return 1
@@ -44,7 +44,7 @@ function ohmyzsh() {
 
 function vim() {
 
-  if ! apt install vim &&
+  if ! apt install -y vim &&
     git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime &&
     sh ~/.vim_runtime/install_awesome_vimrc.sh; then
 
@@ -56,12 +56,12 @@ function vim() {
 
 function installjdk() {
   if ! command -v curl; then
-    apt install curl
+    apt install -y  curl
     echo "dont include vim on the machine os cant install jdk " 1>&2
     return 1
   fi
   if ! curl -o jdk11.deb https://d3pxv6yz143wms.cloudfront.net/11.0.5.10.1/java-11-amazon-corretto-jdk_11.0.5.10-1_amd64.deb &&
-    apt install jdk11.deb; then
+    dpkg -i jdk11.deb &&  apt-get install -f; then
     echo " installation error in jdk" 1>&2
     return 1
   fi
@@ -72,7 +72,7 @@ function installjdk() {
 function spotify_chrome_postman_node_mailspring() {
 
   if ! command -v snap; then
-    apt install snapd
+    apt install -y  snapd
     return 1
   fi
   if
@@ -120,10 +120,7 @@ if ! git_maven_terminator_tmux; then
   exit 2
 fi
 
-if ! ohmyzsh; then
 
-  exit 3
-fi
 if ! vim; then
 
   exit 4
@@ -136,3 +133,14 @@ if ! spotify_chrome_postman_node_mailspring; then
 
   exit 6
 fi
+
+if ! docker_dockercompose; then
+
+  exit 7
+fi
+
+if ! ohmyzsh; then
+
+  exit 8
+fi
+
